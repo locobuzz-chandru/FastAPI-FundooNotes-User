@@ -73,10 +73,12 @@ def authenticate_user(response: Response, token: str, db: Session = Depends(get_
         return {'message': e.args[0], 'status': 401, 'data': {}}
 
 
-@user_router.get('/retrieve_user/', status_code=status.HTTP_200_OK)
-def retrieve_user(response: Response, user: int, db: Session = Depends(get_db)):
+@user_router.get('/retrieve_user/{user_id}', status_code=status.HTTP_200_OK)
+def retrieve_user(response: Response, user_id: int, db: Session = Depends(get_db)):
     try:
-        user = db.query(User).filter_by(id=user).one_or_none()
+        user = db.query(User).filter_by(id=user_id).one_or_none()
+        if not user:
+            raise Exception(f"User ID not found: {user_id}")
         return user.id
     except Exception as e:
         logger.exception(e.args[0])
