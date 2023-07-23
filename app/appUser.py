@@ -13,6 +13,14 @@ user_router = APIRouter()
 
 @user_router.post("/register", status_code=status.HTTP_201_CREATED)
 def register(user: UserValidator, response: Response, db: Session = Depends(get_db)):
+    """Register user.
+    Args:
+        user: User containing user registration details with username and password
+        response: An operation function returns A JSON response to the client.
+        db: Database parameter.
+    Returns:
+        dict: A dictionary containing a token with status and message.
+    """
     try:
         user_dict = user.model_dump()
         user_dict.update({"password": Hasher.get_password_hash(user.password)})
@@ -31,6 +39,14 @@ def register(user: UserValidator, response: Response, db: Session = Depends(get_
 
 @user_router.get("/verify_token/{token}")
 def verify_token(token: str, response: Response, db: Session = Depends(get_db)):
+    """Verify user token.
+    Args:
+        token: Registered user's token
+        response: An operation function returns A JSON response to the client.
+        db: Database parameter.
+    Returns:
+        dict: A dictionary containing the status and message.
+    """
     try:
         payload = JWT.jwt_decode(token)
         user_obj = db.query(User).filter_by(id=payload.get("user")).one_or_none()
@@ -48,6 +64,14 @@ def verify_token(token: str, response: Response, db: Session = Depends(get_db)):
 
 @user_router.post('/login', status_code=status.HTTP_200_OK)
 def login(response: Response, user: UserLogin, db: Session = Depends(get_db)):
+    """Collaborate a user with note.
+    Args:
+        response: An operation function returns A JSON response to the client.
+        user: A dictionary containing username and password.
+        db: Database parameter.
+    Returns:
+        dict: A dictionary containing the status and message.
+    """
     try:
         user_obj = db.query(User).filter_by(username=user.username).first()
         if user_obj and Hasher.verify_password(user.password, user_obj.password):
@@ -61,8 +85,16 @@ def login(response: Response, user: UserLogin, db: Session = Depends(get_db)):
         return {'message': e.args[0], 'status': 400, 'data': {}}
 
 
-@user_router.get('/authenticate_user', status_code=status.HTTP_200_OK)
+@user_router.get('/authenticate_user/{token}', status_code=status.HTTP_200_OK)
 def authenticate_user(response: Response, token: str, db: Session = Depends(get_db)):
+    """Collaborate a user with note.
+    Args:
+        response: An operation function returns A JSON response to the client.
+        token: Login access token.
+        db: Database parameter.
+    Returns:
+        dict: A dictionary containing the status and message.
+    """
     try:
         payload = JWT.jwt_decode(token=token)
         user = db.query(User).filter_by(id=payload.get('user')).one_or_none()
@@ -75,6 +107,14 @@ def authenticate_user(response: Response, token: str, db: Session = Depends(get_
 
 @user_router.get('/retrieve_user/{user_id}', status_code=status.HTTP_200_OK)
 def retrieve_user(response: Response, user_id: int, db: Session = Depends(get_db)):
+    """Collaborate a user with note.
+    Args:
+        response: An operation function returns A JSON response to the client.
+        user_id: Registered user's ID.
+        db: Database parameter.
+    Returns:
+        dict: A dictionary containing the status and message.
+    """
     try:
         user = db.query(User).filter_by(id=user_id).one_or_none()
         if not user:
