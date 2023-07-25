@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class UserValidator(BaseModel):
@@ -6,7 +6,7 @@ class UserValidator(BaseModel):
     password: str
     first_name: str
     last_name: str
-    email: str
+    email: EmailStr
 
     class Config:
         from_attributes = True
