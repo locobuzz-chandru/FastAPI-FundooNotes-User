@@ -11,3 +11,4 @@ redis
 celery[redis]
 pytest
 httpx
+pydantic[email]
