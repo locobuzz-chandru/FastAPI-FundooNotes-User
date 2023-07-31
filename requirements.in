@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2
+python-dotenv
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+alembic
+redis
+celery[redis]
+pytest
+httpx
+pydantic[email]
